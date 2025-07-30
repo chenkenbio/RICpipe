@@ -52,18 +52,20 @@ print "echo \"./4.recalibrate_pvalue/run.sh\\n\"\n";
 my $number_for_each_cpu=int($running_times/$cpuNumber);
 
 open(OSH,">./1.run_simulation/1.base_on_observed/run.sh") || die;
-print OSH "ln -s ../../$output_prefix.merged.network ./\n";
+print OSH "ln -sf ../../$output_prefix.merged.network ./\n";
 foreach (1..$cpuNumber){
-	print OSH "nohup perl $dirs/scripts/2.run_simulation/1.MonteCarlo_simulation.pl $output_prefix.merged.network $number_for_each_cpu thread$_ > result1.thread$_.simulation.list &\n";
+	print OSH "perl $dirs/scripts/2.run_simulation/1.MonteCarlo_simulation.pl $output_prefix.merged.network $number_for_each_cpu thread$_ > result1.thread$_.simulation.list &\n";
 }
+print OSH "wait\n";
 close OSH;
 
 open(RSH,">./1.run_simulation/2.base_on_random/run.sh") || die;
-print RSH "ln -s ../../$output_prefix.merged.network ./\n";
+print RSH "ln -sf ../../$output_prefix.merged.network ./\n";
 print RSH "perl $dirs/scripts/2.run_simulation/0.creat_random_interaction.pl $output_prefix.merged.network > result0.random.network\n";
 foreach (1..$cpuNumber){
-	print RSH "nohup perl $dirs/scripts/2.run_simulation/1.MonteCarlo_simulation.pl result0.random.network $number_for_each_cpu thread$_ > result1.thread$_.simulation_on_random.list &\n";
+	print RSH "perl $dirs/scripts/2.run_simulation/1.MonteCarlo_simulation.pl result0.random.network $number_for_each_cpu thread$_ > result1.thread$_.simulation_on_random.list &\n";
 }
+print RSH "wait\n";
 close RSH;
 
 #pre-process
@@ -72,14 +74,16 @@ close RSH;
 `mkdir ./2.pre-process/2.base_on_random`;
 open(OSH,">./2.pre-process/1.base_on_observed/run.sh") || die;
 foreach (1..$cpuNumber){
-	print OSH "nohup perl $dirs/scripts/3.pre_process/split_and_transpose_large_matrix.pl ../../1.run_simulation/1.base_on_observed/result1.thread$_.simulation.list 100 thread$_ &\n";
+	print OSH "perl $dirs/scripts/3.pre_process/split_and_transpose_large_matrix.pl ../../1.run_simulation/1.base_on_observed/result1.thread$_.simulation.list 100 thread$_ &\n";
 }
+print OSH "wait\n";
 close OSH;
 
 open(RSH,">./2.pre-process/2.base_on_random/run.sh") || die;
 foreach (1..$cpuNumber){
-	print RSH "nohup perl $dirs/scripts/3.pre_process/split_and_transpose_large_matrix.pl ../../1.run_simulation/2.base_on_random/result1.thread$_.simulation_on_random.list 100 thread$_ &\n";
+	print RSH "perl $dirs/scripts/3.pre_process/split_and_transpose_large_matrix.pl ../../1.run_simulation/2.base_on_random/result1.thread$_.simulation_on_random.list 100 thread$_ &\n";
 }
+print RSH "wait\n";
 close RSH;
 
 #calculate_pvalue
@@ -88,14 +92,16 @@ close RSH;
 `mkdir ./3.calculate_pvalue/2.base_on_random`;
 open(OSH,">./3.calculate_pvalue/1.base_on_observed/run.sh") || die;
 foreach (1..$cpuNumber){
-	print OSH "nohup perl $dirs/scripts/4.calculate_pvalue/pvalue_calculator.pl ../../1.run_simulation/1.base_on_observed/all_pairs.thread$_.list ../../2.pre-process/1.base_on_observed/thread$_.transposed.matrix thread$_ &\n";
+	print OSH "perl $dirs/scripts/4.calculate_pvalue/pvalue_calculator.pl ../../1.run_simulation/1.base_on_observed/all_pairs.thread$_.list ../../2.pre-process/1.base_on_observed/thread$_.transposed.matrix thread$_ &\n";
 }
+print OSH "wait\n";
 close OSH;
 
 open(RSH,">./3.calculate_pvalue/2.base_on_random/run.sh") || die;
 foreach (1..$cpuNumber){
-	print RSH "nohup perl $dirs/scripts/4.calculate_pvalue/pvalue_calculator.pl ../../1.run_simulation/2.base_on_random/all_pairs.thread$_.list ../../2.pre-process/2.base_on_random/thread$_.transposed.matrix thread$_ &\n";
+	print RSH "perl $dirs/scripts/4.calculate_pvalue/pvalue_calculator.pl ../../1.run_simulation/2.base_on_random/all_pairs.thread$_.list ../../2.pre-process/2.base_on_random/thread$_.transposed.matrix thread$_ &\n";
 }
+print RSH "wait\n";
 close RSH;
 
 #recalibrate pvalue
