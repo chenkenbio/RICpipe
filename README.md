@@ -36,3 +36,9 @@ Important:
 Add these programs to the PATH environment variable.
 
 
+**Perl requirements:**
+
+- List::MoreUtils  
+- Graph  
+- Math::CDF  
+
