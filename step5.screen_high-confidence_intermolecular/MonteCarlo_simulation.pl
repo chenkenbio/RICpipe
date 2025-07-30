@@ -124,5 +124,5 @@ print SH "perl $dirs/scripts/5.recalibrate_pvalue/2.multiple_testing_correction.
 print SH "gzip -d result1.results_file.for_Test.list.window_500.qval.txt.gz\n";
 print SH "perl $dirs/scripts/5.recalibrate_pvalue/4.replace_rawPvalue_by_LocalCorrectPvalue.pl comparison.observed_to_simulated.basedOnObserved.finalMerge.xls result1.results_file.for_Test.list.window_500.qval.txt > result2.comparison.observed_to_simulated.Add_Local_Corrected_pvalue.list\n";
 print SH "perl $dirs/scripts/5.recalibrate_pvalue/5.filter_interaction.pl result2.comparison.observed_to_simulated.Add_Local_Corrected_pvalue.list $pvalue_cutoff > $output_prefix.significant.interMolecular.interaction.list\n";
-print SH "cp $output_prefix.significant.interMolecular.interaction.list ../\n";
+# print SH "cp $output_prefix.significant.interMolecular.interaction.list ../\n";
 
